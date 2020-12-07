@@ -103,7 +103,7 @@ function DJEFactory(jsonInfo){
             }
         }
         if(crossMode != 0)metaData.strictMode ? Exception("태그가 닫히지 않았습니다.") : Warning("태그가 닫히지 않았습니다.");
-        return ;
+        return cache;
     }
 
     // public functions
