@@ -1,19 +1,33 @@
 [예시코드보기](./test.js "코드 보기")
 
-# DanJa-Eung 0.0.1-alpha2-hotfix
-**확장 가능한 단자응 개발 도구**
+# DanJa-Eung 0.0.1-alpha3
+**확장 가능한 단자응 개발 도구 - Extensible DanJa-Eung Development Kit**
 
 - addTag (태그 이름, 인수로 받을 값의 개수, 호출될 함수) : 태그를 추가합니다.
 - run (문자열) : 단자응 런타임을 실행하여 특정 결과를 반환합니다.
+- removeTag(이름) : 태그를 메모리로부터 해체시킵니다.
+- addTag(any...).addDoc(문서) : 해당 태그에 대한 문서를 제공합니다.
+- getTagDoc(이름) : 문서를 불러옵니다.
+- existTag(이름) : 태그에 대한 유효성 검사를 합니다.
+- getTagList() : 모든 저장된 사용 가능한 태그를 출력합니다.
 
-### 0.0.1-ahpha2-hotfix 수정사항
-- 인수를 재대로 처리하지 못하는 버그 수정
+### 0.0.1-ahpha3 수정사항
+- 여러 태그를 사용할 경우 생기던 문제 수정.
 - 오류와 경고 메세지가 좀 더 상세해졌습니다.
 
-### 0.0.1-ahpha2-hotfix 추가된 기능
-- 생성자를 호출 할 때 받는 설정값의 property중 구현을 하지 않아도 자동으로 디폴트 값을 사용합니다.
+### 0.0.1-ahpha3 추가된 기능
+- getTagList, getTagDoc, existTag, removeTag, addDoc 추가함.
+- 동적 태그 관리 시스템 도입. ( DTMS : Dynamic Tag Management System )
+- 문서 기능 추가
 
-## 생성자의 매개션수에 들어가는 JSON
+### 예정된 기능
+- 인스턴스에 즉시 할당할 수 있는 최적화된 단자응 전용 포맷
+- 단자응을 더 쉽게 관리할 수 있는 명령줄 실행기
+- 어디서나 사용 가능한 JAR ( Java Archive ) 배포판
+- 더 강력하고 빠른 EXE 실행파일
+- 프로그램의 흐름을 제어하는 유사 인터프리터
+
+## 생성자의 매개변수에 들어가는 JSON
 ```js
 jsonInfo = {
         Integer(0) setEngine,

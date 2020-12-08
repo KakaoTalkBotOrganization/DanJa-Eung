@@ -5,7 +5,8 @@ let dje = require("./Danja.js").DJEFactory;
 dje = new dje({
     strictMode : true
 });
-dje.addTag("a", 2, (a, b) => {
-    return a + " 가라사대 \" " + b + " \"";
+dje.addTag("미리보기", 1, (a) => {
+    return "미리보기용 코드 입니다 : " + a;
 });
-console.log(dje.run("시작됨 . \n[[a|피코|이거 좋음 . 써보셈 !!!!]] \n 종료됨 ."));
+dje.addTag("엔터", 0, () => '\n');
+console.log(dje.run("[[미리보기|1234]] [[엔터]] [[미리보기|5678]]"));
