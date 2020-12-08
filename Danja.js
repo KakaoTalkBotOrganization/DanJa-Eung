@@ -1,5 +1,5 @@
 /** Extendable DanJa-Eung Library
- *      - DanJa-Eung.js 0.0.1-alpha
+ *      - DanJa-Eung.js 0.0.1-alpha2-hotfix
  *      - made by PICOPress
  * @param jsonInfo 이 매개변수로부터 DJEFactory를 설정합니다.
  */
@@ -26,11 +26,16 @@ function DJEFactory(jsonInfo){
     let namereg = [ ];
 
     // to implement
+    if(!Object.getOwnPropertyNames(this).includes("log")) { log = { }; log.i = console.log; log.e = console.log; }
 
     registry = metaData.ImportData != null ? metaData.ImportData : registry;
 
+    if(metaData.setEngine === undefined) metaData.setEngine = 0;
+    if(metaData.doWarning !== true && metaData.doWarning !== false) metaData.doWarning = true;
+    if(metaData.strictMode !== true && metaData.strictMode !== false) metaData.strictMode = false;
+
     function Exception(msg) { log.e(msg); throw new Error("오류 : " + msg); }
-    function Warning(msg) { if(metaData.doWarning) log.i(msg); }
+    function Warning(msg) { if(metaData.doWarning) log.i("경고 : " + msg); }
 
     function Runtime(str){
         let cache = "";
@@ -49,27 +54,33 @@ function DJEFactory(jsonInfo){
                 switch(crossMode){
                     case 0 : // [
                         crossMode = 1;
+                        beforeCursor = '[';
                         continue a;
 
                     case 1 : // [
                         getNameMode = true;
                         crossMode = 2;
+                        beforeCursor = '[';
                         continue a;
                 }
             }else if(cursor == ']'){
                 switch(crossMode){
                     case 2 : // ]
                         crossMode = 3;
-                        if(getNameMode) Exception("태그의 구분 문자가 비었습니다 [ " + i + " ]");
+                        if(getNameMode) Exception("태그의 이름이 비었습니다 [ 인덱스 : " + i + " ]");
+                        beforeCursor = cursor;
+                        if(buf != '')argArr.push(buf);
+                        buf = '';
                         continue a;
 
                     case 3 : // ]
-                        if(beforeCursor != ']') Exception("올바르지 않은 태그입니다. [ " + i + " ]");
+                        if(beforeCursor != ']') Exception("올바르지 않은 태그입니다. [ 인덱스 : " + i + " ]");
                         crossMode = 0;
                         let tmp = registry[name];
-                        if(tmp[0] != argArr.length) metaData.strictMode ? Exception("등록된 태그와 처리된 매개변수의 길이가 일치하지 않습니다 [ " + i + " ]") :
-                                                                 Warning("등록된 태그와 처리된 매개변수의 길이가 일치하지 않습니다. 예기치 못한 오류를 일으킬 수 있습니다.");
-                        cache += tmp[1].apply(null, argArr);
+                        if(tmp[0] != argArr.length) metaData.strictMode ? Exception("등록된 태그와 처리된 매개변수의 길이가 일치하지 않습니다 [ 등록된 값 : " + tmp[0] + " , 처리된 값 : " + argArr.length + " ]") :
+                                                                 Warning("등록된 태그와 처리된 매개변수의 길이가 일치하지 않습니다. 예기치 못한 오류를 일으킬 수 있습니다 [ 등록된 값 : " + tmp[0] + " , 처리된 값 : " + argArr.length + " ]");
+                        let res = tmp[1].apply(null, argArr);
+                        cache +=  res === undefined || res === null ? '' : res;
                         break;
                 }
             }else{
@@ -81,8 +92,8 @@ function DJEFactory(jsonInfo){
                 }else if(crossMode == 2){
                     if(cursor == '|' && beforeCursor != '\\'){
                             if(getNameMode && !argMode){
-                            if(buf == '') Exception("태그의 구분 문자가 비었습니다 [ " + i + " ]");
-                            if(!namereg.includes(buf)) Exception("태그의 구분 문자가 유효하지 않습니다 [ " + i + " , " + buf + " ]");
+                            if(buf == '') Exception("태그의 구분 문자가 비었습니다 [ 인덱스 : " + i + " ]");
+                            if(!namereg.includes(buf)) Exception("태그의 구분 문자가 유효하지 않습니다 [ 인덱스 : " + i + " , 버퍼 값 : " + buf + " ]");
                             name = buf;
                             argMode = true;
                             getNameMode = false;
@@ -92,7 +103,7 @@ function DJEFactory(jsonInfo){
                             argArr.push(buf);
                             buf = "";
                             continue;
-                        }else Exception("( 중지됨 ) 구문 분석 중 내부 환경이 충돌하였습니다 [ " + i + " ]");
+                        }else Exception("( 중지됨 ) 구문 분석 중 내부 환경이 충돌하였습니다 [ 인덱스 : " + i + " ]");
                     }
                     buf += cursor;
                     beforeCursor = cursor;
@@ -114,11 +125,6 @@ function DJEFactory(jsonInfo){
         return true;
     }
     this.run = function(str) { return Runtime(str); }
-}
-
-if(this.log == undefined){
-    log.i = console.log;
-    log.e = console.log;
 }
 
 module.exports.DJEFactory = DJEFactory;
