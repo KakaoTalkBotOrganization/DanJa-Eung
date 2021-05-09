@@ -19,7 +19,8 @@ function DJEFactory(jsonInfo){
         setEngine : 0,
         ImportData : { },
         doWarning : true,
-        strictMode : false
+        strictMode : false,
+        doError : true
     };
 
     let registry = { };
@@ -31,7 +32,7 @@ function DJEFactory(jsonInfo){
     if(!Object.getOwnPropertyNames(this).includes("log")) { log = { }; log.i = console.log; log.e = console.log; }
 
     registry = metaData.ImportData != null ? metaData.ImportData : registry;
-    function Exception(msg) { log.e(msg); throw new Error("오류 : " + msg); }
+    function Exception(msg) { if(metaData.doError) return; log.e(msg); throw new Error("오류 : " + msg); }
     function Warning(msg) { if(metaData.doWarning) log.i("경고 : " + msg); }
 
     if(metaData.setEngine === undefined || !allowedEngines.includes(metaData.setEngine)) metaData.setEngine = 0; 
@@ -88,7 +89,7 @@ function DJEFactory(jsonInfo){
                         if(beforeCursor != ']') Exception("올바르지 않은 태그입니다. [ 인덱스 : " + i + " ]");
                         crossMode = 0;
                         let tmp = registry[name];
-                        if(tmp[0] != argArr.length) metaData.strictMode ? Exception("등록된 태그와 처리된 매개변수의 길이가 일치하지 않습니다 [ " + name + " - 등록된 값 : " + tmp[0] + " , 처리된 값 : " + argArr.length + " ]") :
+                        if(tmp[0] != argArr.length && tmp[0] != -1) metaData.strictMode ? Exception("등록된 태그와 처리된 매개변수의 길이가 일치하지 않습니다 [ " + name + " - 등록된 값 : " + tmp[0] + " , 처리된 값 : " + argArr.length + " ]") :
                                                                         Warning("등록된 태그와 처리된 매개변수의 길이가 일치하지 않습니다. 예기치 못한 오류를 일으킬 수 있습니다 [ " + name + " - 등록된 값 : " + tmp[0] + " , 처리된 값 : " + argArr.length + " ]");
                         let res = tmp[1].apply(null, argArr);
                         cache +=  res === undefined || res === null ? '' : res;

@@ -5,8 +5,8 @@ let dje = require("./Danja.js").DJEFactory;
 dje = new dje({
     strictMode : true
 });
-dje.addTag("미리보기", 1, (a) => {
-    return "미리보기용 코드 입니다 : " + a;
+dje.addTag("미리보기", -1, (a, b) => {
+    return "미리보기용 코드 입니다 : " + a + b;
 });
 dje.addTag("엔터", 0, () => '\n');
 console.log(dje.run("[[미리보기|1234]] [[엔터]] [[미리보기|5678]]"));
